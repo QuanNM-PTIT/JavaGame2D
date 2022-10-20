@@ -3,13 +3,13 @@ package Main;
 import Inputs.*;
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
+import java.util.*;
 
 public class GamePanel extends JPanel
 {
     private MouseInputs mouseInputs;
     private float deltaX = 100f, deltaY = 100f;
-    private float xDir = 0.05f, yDir = 0.05f;
+    private float xDir = 1f, yDir = 1f;
     private int r = 0, g = 0, b = 0;
     private Random rnd;
     private Color color;
@@ -45,13 +45,13 @@ public class GamePanel extends JPanel
     private void updateRectangle()
     {
         deltaX += xDir;
-        if (deltaX >= 500 || deltaX <= 0)
+        if (deltaX >= 350 || deltaX <= 0)
         {
             xDir *= -1;
             color = getRndColor();
         }
         deltaY += yDir;
-        if (deltaY >= 500 || deltaY <= 0)
+        if (deltaY >= 350 || deltaY <= 0)
         {
             yDir *= -1;
             color = getRndColor();
@@ -64,6 +64,5 @@ public class GamePanel extends JPanel
         updateRectangle();
         g.setColor(color);
         g.fillRect((int) deltaX, (int) deltaY, 100, 100);
-        repaint();
     }
 }
