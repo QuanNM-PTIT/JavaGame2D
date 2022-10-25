@@ -1,27 +1,50 @@
 package Main;
 
 import Inputs.*;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class GamePanel extends JPanel
 {
     private MouseInputs mouseInputs;
+    private BufferedImage img;
     private float deltaX = 100f, deltaY = 100f;
-    private float xDir = 1f, yDir = 1f;
     private int r = 0, g = 0, b = 0;
-    private Random rnd;
-    private Color color;
 
     public GamePanel()
     {
-        rnd = new Random();
-        color = new Color(r, g, b);
         mouseInputs = new MouseInputs();
+        importImage();
+        setPanelSize();
         addKeyListener(new KeyboardInputs(this));
         addMouseListener(mouseInputs);
         addMouseMotionListener(mouseInputs);
+    }
+
+    private void importImage()
+    {
+        InputStream inp = getClass().getResourceAsStream("/player_sprites.png");
+        try
+        {
+            img = ImageIO.read(inp);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void setPanelSize()
+    {
+        Dimension size = new Dimension(1280, 800);
+        setMaximumSize(size);
+        setPreferredSize(size);
+        setMaximumSize(size);
     }
 
     public void changeDeltaX(int val)
@@ -34,35 +57,9 @@ public class GamePanel extends JPanel
         this.deltaY += val;
     }
 
-    private Color getRndColor()
-    {
-        r = rnd.nextInt(255);
-        g = rnd.nextInt(255);
-        b = rnd.nextInt(255);
-        return new Color(r, g, b);
-    }
-
-    private void updateRectangle()
-    {
-        deltaX += xDir;
-        if (deltaX >= 350 || deltaX <= 0)
-        {
-            xDir *= -1;
-            color = getRndColor();
-        }
-        deltaY += yDir;
-        if (deltaY >= 350 || deltaY <= 0)
-        {
-            yDir *= -1;
-            color = getRndColor();
-        }
-    }
-
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        updateRectangle();
-        g.setColor(color);
-        g.fillRect((int) deltaX, (int) deltaY, 100, 100);
+        g.drawImage(img.getSubimage(0, 0, 64, 40), 0, 0, 128, 80, null);
     }
 }
