@@ -1,10 +1,9 @@
 package Entities;
 
-import javax.imageio.ImageIO;
+import Utilz.LoadSave;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import static Utilz.Constants.PlayerConstants.*;
@@ -96,10 +95,7 @@ public class Player extends Entity
 
     private void loadAnimation()
     {
-        InputStream inp = getClass().getResourceAsStream("/player_sprites.png");
-        try
-        {
-            BufferedImage img = ImageIO.read(inp);
+            BufferedImage img = LoadSave.getPlayerAtlas();
             animation = new ArrayList<ArrayList<BufferedImage>>();
             for (int i = 0; i < 9; ++i)
             {
@@ -108,22 +104,6 @@ public class Player extends Entity
                     tmp.add(img.getSubimage(j * 64, i * 40, 64, 40));
                 animation.add(tmp);
             }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-                inp.close();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
     }
 
     public void resetDirBooleans()
