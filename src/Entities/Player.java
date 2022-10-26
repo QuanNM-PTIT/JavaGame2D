@@ -32,7 +32,7 @@ public class Player extends Entity
 
     public void render(Graphics g)
     {
-        g.drawImage((animation.get(playerAction)).get(aniIdx), (int) x, (int) y, 128, 80, null);
+        g.drawImage((animation.get(playerAction)).get(aniIdx), (int) x, (int) y, 96, 60, null);
     }
 
     private void updateAnimation()

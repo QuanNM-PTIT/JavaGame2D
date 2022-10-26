@@ -1,6 +1,9 @@
 package Utilz;
 
+import Main.Game;
+
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +11,8 @@ import java.io.InputStream;
 public class LoadSave
 {
     public static final String PLAYER_ATLAS = "player_sprites.png";
+    public static final String LEVEL_ATLAS = "outside_sprites.png";
+    public static final String LEVEL_ONE_DATA = "level_one_data.png";
 
     public static BufferedImage GetPlayerAtlas(String fileName)
     {
@@ -33,5 +38,21 @@ public class LoadSave
             }
         }
         return img;
+    }
+
+    public static int[][] GetLevelData()
+    {
+        int[][] lvData = new int[Game.TILES_IN_HEIGHT][Game.TILES_IN_WIDTH];
+        BufferedImage img = GetPlayerAtlas(LEVEL_ONE_DATA);
+        for (int i = 0; i < img.getHeight(); ++i)
+            for (int j = 0; j < img.getWidth(); ++j)
+            {
+                Color color = new Color(img.getRGB(j, i));
+                int val = color.getRed();
+                if (val >= 48)
+                    val = 0;
+                lvData[i][j] = color.getRed();
+            }
+        return lvData;
     }
 }
