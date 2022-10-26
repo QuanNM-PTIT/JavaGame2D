@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static Utilz.Constants.Directions.*;
-import static Utilz.Constants.Directions.RIGHT;
 import static Utilz.Constants.PlayerConstants.*;
 
 public class Player extends Entity
@@ -32,6 +30,7 @@ public class Player extends Entity
         updateAnimation();
         setAnimation();
     }
+
     public void render(Graphics g)
     {
         g.drawImage((animation.get(playerAction)).get(aniIdx), (int) x, (int) y, 128, 80, null);
