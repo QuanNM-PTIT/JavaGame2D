@@ -14,7 +14,7 @@ public class Player extends Entity
     private ArrayList<ArrayList<BufferedImage>> animation;
     private int aniTick, aniIdx, aniSpeed = 15;
     private int playerAction = IDLE;
-    private boolean moving = false;
+    private boolean moving = false, attacking = false;
     private boolean left, up, right, down;
     private float playerSpeed = 0.5f;
 
@@ -44,16 +44,29 @@ public class Player extends Entity
             aniTick = 0;
             ++aniIdx;
             if (aniIdx >= GetSpriteAmount(playerAction))
+            {
                 aniIdx = 0;
+                attacking = false;
+            }
         }
     }
 
     public void setAnimation()
     {
+        int startAni = playerAction;
         if (moving)
             playerAction = RUNNING;
         else
             playerAction = IDLE;
+        if (attacking)
+            playerAction = ATTACK_1;
+        if (startAni != playerAction)
+            resetAniTick();
+    }
+
+    public void resetAniTick()
+    {
+        aniTick = aniIdx = 0;
     }
 
     public void updatePos()
@@ -111,6 +124,16 @@ public class Player extends Entity
                 e.printStackTrace();
             }
         }
+    }
+
+    public void resetDirBooleans()
+    {
+        left = right = up = down = false;
+    }
+
+    public void setAttacking(boolean attacking)
+    {
+        this.attacking = attacking;
     }
 
     public boolean isLeft()

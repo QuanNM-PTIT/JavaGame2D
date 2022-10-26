@@ -36,6 +36,8 @@ public class KeyboardInputs implements KeyListener
             case KeyEvent.VK_RIGHT:
                 gamePanel.getGame().getPlayer().setRight(true);
                 break;
+            case KeyEvent.VK_A:
+                gamePanel.getGame().getPlayer().setAttacking(true);
         }
     }
 
