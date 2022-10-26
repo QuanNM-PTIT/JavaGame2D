@@ -7,10 +7,12 @@ import java.io.InputStream;
 
 public class LoadSave
 {
-    public static BufferedImage getPlayerAtlas()
+    public static final String PLAYER_ATLAS = "player_sprites.png";
+
+    public static BufferedImage GetPlayerAtlas(String fileName)
     {
         BufferedImage img = null;
-        InputStream inp = LoadSave.class.getResourceAsStream("/player_sprites.png");
+        InputStream inp = LoadSave.class.getResourceAsStream("/" + fileName);
         try
         {
             img = ImageIO.read(inp);

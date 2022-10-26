@@ -95,7 +95,7 @@ public class Player extends Entity
 
     private void loadAnimation()
     {
-            BufferedImage img = LoadSave.getPlayerAtlas();
+            BufferedImage img = LoadSave.GetPlayerAtlas(LoadSave.PLAYER_ATLAS);
             animation = new ArrayList<ArrayList<BufferedImage>>();
             for (int i = 0; i < 9; ++i)
             {
