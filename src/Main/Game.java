@@ -6,6 +6,7 @@ public class Game implements Runnable
     private GamePanel gamePanel;
     private Thread gameThread;
     private final int FPS = 120;
+    private final int UPS = 200;
 
     private void startGameLoop()
     {
@@ -21,26 +22,43 @@ public class Game implements Runnable
         gamePanel.requestFocus();
     }
 
+    public void update()
+    {
+        gamePanel.updateGame();
+    }
+
     @Override
     public void run()
     {
         double timePerFrame = 1e9 / FPS;
-        long now, lastFrame = System.nanoTime();
+        double timePerUpdate = 1e9 / UPS;
         long frame = 0, lastCheck = System.currentTimeMillis();
+        long prevTime = System.nanoTime(), updates = 0;
+        double deltaU = 0;
+        double deltaF = 0;
         while (true)
         {
-            now = System.nanoTime();
-            if (now - lastFrame >= timePerFrame)
+            long curTime = System.nanoTime();
+            deltaU += (curTime - prevTime) / timePerUpdate;
+            deltaF += (curTime - prevTime) / timePerFrame;
+            prevTime = curTime;
+            if (deltaU >= 1)
+            {
+                update();
+                ++updates;
+                --deltaU;
+            }
+            if (deltaF >= 1)
             {
                 gamePanel.repaint();
-                lastFrame = now;
                 ++frame;
+                --deltaF;
             }
             if (System.currentTimeMillis() - lastCheck >= 1000)
             {
                 lastCheck = System.currentTimeMillis();
-                System.out.println("FPS: " + frame);
-                frame = 0;
+                System.out.println("FPS: " + frame + " | UPS: " + updates);
+                frame = updates = 0;
             }
         }
     }

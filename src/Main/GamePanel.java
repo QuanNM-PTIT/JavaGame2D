@@ -106,27 +106,31 @@ public class GamePanel extends JPanel
             switch (playerDir)
             {
                 case UP:
-                    deltaY -= 1;
+                    deltaY -= 0.5;
                     break;
                 case DOWN:
-                    deltaY += 1;
+                    deltaY += 0.5;
                     break;
                 case LEFT:
-                    deltaX -= 1;
+                    deltaX -= 0.5;
                     break;
                 case RIGHT:
-                    deltaX += 1;
+                    deltaX += 0.5;
                     break;
             }
         }
     }
 
-    public void paintComponent(Graphics g)
+    public void updateGame()
     {
-        super.paintComponent(g);
         updateAnimation();
         setAnimation();
         updatePos();
+    }
+
+    public void paintComponent(Graphics g)
+    {
+        super.paintComponent(g);
         g.drawImage((animation.get(playerAction)).get(aniIdx), (int) deltaX, (int) deltaY, 128, 80, null);
     }
 }
