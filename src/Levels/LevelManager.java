@@ -43,4 +43,9 @@ public class LevelManager
     {
 
     }
+
+    public Level getCurLevel()
+    {
+        return levelOne;
+    }
 }
