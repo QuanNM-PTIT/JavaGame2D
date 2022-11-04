@@ -14,7 +14,7 @@ public class Menu extends State implements Statemethods
 {
 
     private ArrayList<MenuButton> buttons = new ArrayList<MenuButton>();
-    private BufferedImage backgroundImage;
+    private BufferedImage backgroundImage, menuBackgroundImage;
     private int menuX, menuY, menuWidth, menuHeight;
 
     public Menu(Game game)
@@ -22,6 +22,7 @@ public class Menu extends State implements Statemethods
         super(game);
         loadButton();
         loadBackground();
+        menuBackgroundImage = LoadSave.GetPlayerAtlas(LoadSave.MENU_BACKGROUND_IMG);
     }
 
     private void loadBackground()
@@ -50,6 +51,7 @@ public class Menu extends State implements Statemethods
     @Override
     public void draw(Graphics g)
     {
+        g.drawImage(menuBackgroundImage, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
         g.drawImage(backgroundImage, menuX, menuY, menuWidth, menuHeight, null);
         for (MenuButton mb : buttons)
             mb.draw(g);
