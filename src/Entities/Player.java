@@ -41,10 +41,10 @@ public class Player extends Entity
         setAnimation();
     }
 
-    public void render(Graphics g, int xLvlOffset)
+    public void render(Graphics g, int lvlOffset)
     {
-        g.drawImage((animation.get(playerAction)).get(aniIdx), (int) (hitbox.x - xDrawOffset) - xLvlOffset, (int) (hitbox.y - yDrawOffset), (int) (64 * Game.SCALE), (int) (40 * Game.SCALE), null);
-        //drawHitbox(g);
+        g.drawImage((animation.get(playerAction)).get(aniIdx), (int) (hitbox.x - xDrawOffset) - lvlOffset, (int) (hitbox.y - yDrawOffset), width, height, null);
+        //drawHitbox(g, lvlOffset);
     }
 
     private void updateAnimation()
@@ -112,7 +112,7 @@ public class Player extends Entity
             }
             else
             {
-                hitbox.y = GetEntityPosUnderRoofOrAboveFloor(hitbox, airSpeed);
+                hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
                 if (airSpeed > 0)
                     resetInAin();
                 else

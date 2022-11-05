@@ -8,7 +8,7 @@ public class HelpMethods
 {
     public static boolean CanMoveHere(float x, float y, float width, float height, int[][] lvlData)
     {
-        return !IsSolid(x, y, lvlData) && !IsSolid(x + width, y + height, lvlData) && !IsSolid(x + width, y, lvlData) && !IsSolid(x, y + height, lvlData);
+        return (!IsSolid(x, y, lvlData) && !IsSolid(x + width, y + height, lvlData) && !IsSolid(x + width, y, lvlData) && !IsSolid(x, y + height, lvlData));
     }
 
     public static boolean IsSolid(float x, float y, int[][] lvlData)
@@ -18,9 +18,9 @@ public class HelpMethods
             return true;
         if (y < 0 || y >= Game.GAME_HEIGHT)
             return true;
-        int xIdx = (int) (x / Game.TILES_SIZE);
-        int yIdx = (int) (y / Game.TILES_SIZE);
-        int val = lvlData[yIdx][xIdx];
+        float xIdx = x / Game.TILES_SIZE;
+        float yIdx = y / Game.TILES_SIZE;
+        int val = lvlData[(int) yIdx][(int) xIdx];
         if (val >= 48 || val < 0 || val != 11)
             return true;
         return false;
@@ -39,7 +39,7 @@ public class HelpMethods
             return curTile * Game.TILES_SIZE;
     }
 
-    public static int GetEntityPosUnderRoofOrAboveFloor(Rectangle2D.Float hitBox, float airSpeed)
+    public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitBox, float airSpeed)
     {
         int curTile = (int) (hitBox.y / Game.TILES_SIZE);
         if (airSpeed > 0)
@@ -54,8 +54,13 @@ public class HelpMethods
 
     public static boolean IsEntityOnFloor(Rectangle2D.Float hitbox, int[][] lvlData)
     {
-        if (!IsSolid(hitbox.x, hitbox.y + hitbox.height + 2, lvlData) && !IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 2, lvlData))
+        if (!IsSolid(hitbox.x, hitbox.y + hitbox.height + 1, lvlData) && !IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 1, lvlData))
             return false;
         return true;
+    }
+
+    public static boolean IsFloor(Rectangle2D.Float hitbox, float xSpeed, int[][] lvlData)
+    {
+        return IsSolid(hitbox.x + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
     }
 }
