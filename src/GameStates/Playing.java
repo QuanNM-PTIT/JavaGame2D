@@ -1,5 +1,7 @@
 package GameStates;
 
+import Entities.Enemy;
+import Entities.EnemyManager;
 import Entities.Player;
 import Levels.LevelManager;
 import Main.Game;
@@ -18,6 +20,7 @@ public class Playing extends State implements Statemethods
 {
     private Player player;
     private LevelManager levelManager;
+    private EnemyManager enemyManager;
     private PauseOverlay pauseOverlay;
     private boolean paused = false;
     private int xLvlOffset;
@@ -46,6 +49,7 @@ public class Playing extends State implements Statemethods
     private void initClasses()
     {
         levelManager = new LevelManager(game);
+        enemyManager = new EnemyManager(this);
         player = new Player(200, 200, (int) (64 * game.SCALE), (int) (40 * game.SCALE));
         player.loadLvlData(levelManager.getCurLevel().getLevelData());
         pauseOverlay = new PauseOverlay(this);
@@ -57,6 +61,7 @@ public class Playing extends State implements Statemethods
         if (!paused)
         {
             levelManager.update();
+            enemyManager.update();
             player.update();
             checkCloseToBorder();
         }
@@ -85,6 +90,7 @@ public class Playing extends State implements Statemethods
         drawClouds(g);
         levelManager.draw(g, xLvlOffset);
         player.render(g, xLvlOffset);
+        enemyManager.draw(g, xLvlOffset);
         if (paused)
         {
             g.setColor(new Color(0, 0, 0, 125));
