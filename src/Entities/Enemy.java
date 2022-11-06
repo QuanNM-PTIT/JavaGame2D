@@ -1,6 +1,9 @@
 package Entities;
 
+import GameStates.Playing;
 import Main.Game;
+
+import java.awt.geom.Rectangle2D;
 
 import static Utilz.Constants.UI.EnemyConstants.*;
 import static Utilz.HelpMethods.*;
@@ -18,12 +21,18 @@ public abstract class Enemy extends Entity
     protected int walkDir = LEFT;
     protected int yTile;
     protected float attackDistance = Game.TILES_SIZE;
+    protected int maxHealth;
+    protected int curHealth;
+    protected boolean active = true;
+    protected boolean attackChecked;
 
     public Enemy(float x, float y, int width, int height, int enemyType)
     {
         super(x, y, width, height);
         this.enemyType = enemyType;
         intitHitbox(x, y, width, height);
+        maxHealth = GetMaxHealth(enemyType);
+        curHealth = maxHealth;
     }
 
     protected void firstUpdateCheck(int[][] lvlData)
@@ -67,6 +76,22 @@ public abstract class Enemy extends Entity
         changeWalkDir();
     }
 
+    public void hurt(int val)
+    {
+        curHealth -= val;
+        if (curHealth <= 0)
+            newState(DEAD);
+        else
+            newState(HIT);
+    }
+
+    protected void checkEnemyHit(Rectangle2D.Float attackBox, Player player)
+    {
+        if (attackBox.intersects(player.hitbox))
+            player.changeHealth(-GetEnemyDmg(enemyType));
+        attackChecked = true;
+    }
+
     protected void updateAnimationTick()
     {
         ++animationTick;
@@ -77,8 +102,11 @@ public abstract class Enemy extends Entity
             if (animationIdx >= GetSpriteAmount(enemyType, enemyState))
             {
                 animationIdx = 0;
-                if (enemyState == ATTACK)
-                    enemyState = IDLE;
+                switch (enemyState)
+                {
+                    case ATTACK, HIT -> enemyState = IDLE;
+                    case DEAD -> active = false;
+                }
             }
         }
     }
@@ -133,5 +161,21 @@ public abstract class Enemy extends Entity
     public int getEnemyState()
     {
         return enemyState;
+    }
+
+    public boolean isActive()
+    {
+        return active;
+    }
+
+    public void resetEnemy()
+    {
+        hitbox.x = x;
+        hitbox.y = y;
+        firstUpdate = true;
+        curHealth = maxHealth;
+        newState(IDLE);
+        active = true;
+        fallSpeed = 0;
     }
 }
