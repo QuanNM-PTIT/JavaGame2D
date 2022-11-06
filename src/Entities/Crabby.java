@@ -15,13 +15,13 @@ public class Crabby extends Enemy
         intitHitbox(x, y, (int) (22 * Game.SCALE), (int) (19 * Game.SCALE));
     }
 
-    public void update(int[][] lvlData)
+    public void update(int[][] lvlData, Player player)
     {
-        updateMove(lvlData);
+        updateMove(lvlData, player);
         updateAnimationTick();
     }
 
-    private void updateMove(int[][] lvlData)
+    private void updateMove(int[][] lvlData, Player player)
     {
         firstUpdateCheck(lvlData);
         if (inAir)
@@ -31,9 +31,13 @@ public class Crabby extends Enemy
             switch (enemyState)
             {
                 case IDLE:
-                    enemyState = RUNNING;
+                    newState(RUNNING);
                     break;
                 case RUNNING:
+                    if (canSeePlayer(lvlData, player))
+                        turnTowardsPlayer(player);
+                    if (isPlayerCloseForAttack(player))
+                        newState(ATTACK);
                     move(lvlData);
                     break;
             }

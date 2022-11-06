@@ -20,10 +20,7 @@ public class HelpMethods
             return true;
         float xIdx = x / Game.TILES_SIZE;
         float yIdx = y / Game.TILES_SIZE;
-        int val = lvlData[(int) yIdx][(int) xIdx];
-        if (val >= 48 || val < 0 || val != 11)
-            return true;
-        return false;
+        return IsTileSolid((int) xIdx, (int) yIdx, lvlData);
     }
 
     public static float GetEntityXPosNextToWall(Rectangle2D.Float hitBox, float xSpeed)
@@ -62,5 +59,37 @@ public class HelpMethods
     public static boolean IsFloor(Rectangle2D.Float hitbox, float xSpeed, int[][] lvlData)
     {
         return IsSolid(hitbox.x + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
+    }
+
+    public static boolean IsTileSolid(int xTile, int yTile, int[][] lvlData)
+    {
+        int val = lvlData[yTile][xTile];
+        if (val >= 48 || val < 0 || val != 11)
+            return true;
+        return false;
+    }
+
+    public static boolean IsAllWalkable(int xStart, int xEnd, int y, int[][] lvlData)
+    {
+        for (int i = 0; i < xEnd - xStart; ++i)
+        {
+            if (IsTileSolid(xStart + i, y, lvlData))
+                return false;
+            if (y + 1 < lvlData.length)
+            {
+                if (!IsTileSolid(xStart + i, y + 1, lvlData))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean IsSightClear(int[][] lvlData, Rectangle2D.Float firstHitbox, Rectangle2D.Float secondHitbox, int yTile)
+    {
+        int firstXTile = (int) (firstHitbox.x / Game.TILES_SIZE);
+        int secondXTile = (int) (secondHitbox.x / Game.TILES_SIZE);
+        if (firstXTile > secondXTile)
+            return IsAllWalkable(secondXTile, firstXTile, yTile, lvlData);
+        return IsAllWalkable(firstXTile, secondXTile, yTile, lvlData);
     }
 }

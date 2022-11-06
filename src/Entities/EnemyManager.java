@@ -26,10 +26,10 @@ public class EnemyManager
         crabbies = LoadSave.GetCrabs();
     }
 
-    public void update(int[][] lvlData)
+    public void update(int[][] lvlData, Player player)
     {
         for (Crabby i : crabbies)
-            i.update(lvlData);
+            i.update(lvlData, player);
     }
 
     public void draw(Graphics g, int xLvlOffset)
