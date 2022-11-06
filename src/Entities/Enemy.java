@@ -2,8 +2,6 @@ package Entities;
 
 import Main.Game;
 
-import java.awt.geom.Rectangle2D;
-
 import static Utilz.Constants.UI.EnemyConstants.*;
 import static Utilz.HelpMethods.*;
 import static Utilz.Constants.Directions.*;
@@ -107,8 +105,9 @@ public abstract class Enemy extends Entity
 
     protected boolean isPlayerCloseForAttack(Player player)
     {
-        int absVal = (int) Math.abs(player.hitbox.x - hitbox.x);
-        return absVal <= attackDistance;
+        int absValX = (int) Math.abs(player.hitbox.x - hitbox.x);
+        int absValY = (int) Math.abs(player.hitbox.y - hitbox.y);
+        return absValX <= attackDistance && absValY <= attackDistance;
     }
 
     protected void newState(int enemyState)

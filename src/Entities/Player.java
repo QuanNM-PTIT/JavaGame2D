@@ -5,6 +5,7 @@ import Utilz.LoadSave;
 import static Utilz.HelpMethods.*;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -21,30 +22,92 @@ public class Player extends Entity
     private int[][] lvlData;
     private float xDrawOffset = 21 * Game.SCALE;
     private float yDrawOffset = 4 * Game.SCALE;
+
     private float airSpeed = 0;
     private float gravity = 0.04f * Game.SCALE;
     private float jumpSpeed = -2.75f * Game.SCALE;
     private float fallSpeedAfterCollision = 0.5f * Game.SCALE;
     private boolean inAir = false;
 
+    private BufferedImage statusBarImg;
+    private int statusBarWidth = (int) (192 * Game.SCALE);
+    private int statusBarHeight = (int) (58 * Game.SCALE);
+    private int statusBarX = (int) (10 * Game.SCALE);
+    private int statusBarY = (int) (10 * Game.SCALE);
+
+    private int healthBarWidth = (int) (150 * Game.SCALE);
+    private int healthBarHeight = (int) (4 * Game.SCALE);
+    private int healthBarXStart = (int) (34 * Game.SCALE);
+    private int healthBarYStart = (int) (14 * Game.SCALE);
+
+    private int maxHealth = 100;
+    private int curHealth = maxHealth;
+    private int healthWidth = healthBarWidth;
+
+    private int flipX = 0;
+    private int flipW = 1;
+
+    private Rectangle2D.Float attackBox;
+
     public Player(float x, float y, int width, int height)
     {
         super(x, y, width, height);
         loadAnimation();
         intitHitbox(x, y, (int) (20 * Game.SCALE), (int) (27 * Game.SCALE));
+        initAttackBox();
+    }
+
+    private void initAttackBox()
+    {
+        attackBox = new Rectangle2D.Float(x, y, (int) 20 * Game.SCALE, (int) 20 * Game.SCALE);
     }
 
     public void update()
     {
+        updateHealthBar();
+        uppdateAttackBox();
         updatePos();
         updateAnimation();
         setAnimation();
     }
 
+    private void uppdateAttackBox()
+    {
+        if (right)
+        {
+            attackBox.x = hitbox.x + hitbox.width + (int) (10 * Game.SCALE);
+        }
+        else if (left)
+        {
+            attackBox.x = hitbox.x - hitbox.width - (int) (10 * Game.SCALE);
+        }
+        attackBox.y = hitbox.y + 10 * Game.SCALE;
+    }
+
+    private void updateHealthBar()
+    {
+        healthBarWidth = (int) ((curHealth / (float) maxHealth) * healthWidth);
+    }
+
     public void render(Graphics g, int lvlOffset)
     {
-        g.drawImage((animation.get(playerAction)).get(aniIdx), (int) (hitbox.x - xDrawOffset) - lvlOffset, (int) (hitbox.y - yDrawOffset), width, height, null);
+        g.drawImage((animation.get(playerAction)).get(aniIdx), (int) (hitbox.x - xDrawOffset) - lvlOffset + flipX, (int) (hitbox.y - yDrawOffset), width * flipW, height, null);
         //drawHitbox(g, lvlOffset);
+        drawAttackBox(g, lvlOffset);
+        drawUI(g);
+    }
+
+    private void drawAttackBox(Graphics g, int lvlOffsetX)
+    {
+        g.setColor(Color.red);
+        g.drawRect((int) attackBox.x - lvlOffsetX, (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
+    }
+
+    private void drawUI(Graphics g)
+    {
+        g.drawImage(statusBarImg, statusBarX, statusBarY, statusBarWidth, statusBarHeight, null);
+        g.setColor(Color.red);
+        g.fillRect(healthBarXStart + statusBarX, healthBarYStart + statusBarY, healthBarWidth, healthBarHeight);
     }
 
     private void updateAnimation()
@@ -77,7 +140,7 @@ public class Player extends Entity
                 playerAction = FALLING;
         }
         if (attacking)
-            playerAction = ATTACK_1;
+            playerAction = ATTACK;
         if (startAni != playerAction)
             resetAniTick();
     }
@@ -90,15 +153,23 @@ public class Player extends Entity
     public void updatePos()
     {
         moving = false;
+        if (jump)
+            jump();
         if (!left && !right && !inAir)
             return;
         float xSpeed = 0;
-        if (jump)
-            jump();
         if (left)
+        {
             xSpeed -= playerSpeed;
+            flipX = width;
+            flipW = -1;
+        }
         else if (right)
+        {
             xSpeed += playerSpeed;
+            flipX = 0;
+            flipW = 1;
+        }
         if (!inAir)
             if (!IsEntityOnFloor(hitbox, lvlData))
                 inAir = true;
@@ -114,7 +185,7 @@ public class Player extends Entity
             {
                 hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
                 if (airSpeed > 0)
-                    resetInAin();
+                    resetInAir();
                 else
                     airSpeed = fallSpeedAfterCollision;
                 updateXPos(xSpeed);
@@ -133,7 +204,7 @@ public class Player extends Entity
         airSpeed = jumpSpeed;
     }
 
-    public void resetInAin()
+    public void resetInAir()
     {
         inAir = false;
         airSpeed = 0;
@@ -149,17 +220,30 @@ public class Player extends Entity
         }
     }
 
+    public void changeHealth(int val)
+    {
+        curHealth += val;
+        if (curHealth <= 0)
+        {
+            curHealth = 0;
+        }
+        else if (curHealth >= maxHealth)
+            curHealth = maxHealth;
+    }
+
     private void loadAnimation()
     {
-            BufferedImage img = LoadSave.GetPlayerAtlas(LoadSave.PLAYER_ATLAS);
-            animation = new ArrayList<ArrayList<BufferedImage>>();
-            for (int i = 0; i < 9; ++i)
-            {
-                ArrayList<BufferedImage> tmp = new ArrayList<BufferedImage>();
-                for (int j = 0; j < 6; ++j)
-                    tmp.add(img.getSubimage(j * 64, i * 40, 64, 40));
-                animation.add(tmp);
-            }
+        BufferedImage img = LoadSave.GetPlayerAtlas(LoadSave.PLAYER_ATLAS);
+        animation = new ArrayList<ArrayList<BufferedImage>>();
+        for (int i = 0; i < 7; ++i)
+        {
+            ArrayList<BufferedImage> tmp = new ArrayList<BufferedImage>();
+            for (int j = 0; j < 8; ++j)
+                tmp.add(img.getSubimage(j * 64, i * 40, 64, 40));
+            animation.add(tmp);
+        }
+        statusBarImg = LoadSave.GetPlayerAtlas(LoadSave.STATUS_BAR);
+
     }
 
     public void loadLvlData(int[][] lvlData)
