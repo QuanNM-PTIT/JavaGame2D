@@ -1,6 +1,7 @@
 package Entities;
 
 import GameStates.Playing;
+import Levels.Level;
 import Utilz.LoadSave;
 import static Utilz.Constants.UI.EnemyConstants.*;
 
@@ -19,19 +20,26 @@ public class EnemyManager
     {
         this.playing = playing;
         loadEnemyImages();
-        addEnemies();
     }
 
-    private void addEnemies()
+    public void loadEnemies(Level level)
     {
-        crabbies = LoadSave.GetCrabs();
+        crabbies = level.getCrabbies();
     }
 
     public void update(int[][] lvlData, Player player)
     {
+        boolean isAnyActive = false;
         for (Crabby i : crabbies)
+        {
             if (i.isActive())
+            {
                 i.update(lvlData, player);
+                isAnyActive = true;
+            }
+        }
+        if (!isAnyActive)
+            playing.setLevelCompleted(true);
     }
 
     public void draw(Graphics g, int xLvlOffset)

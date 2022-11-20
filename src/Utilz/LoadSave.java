@@ -8,15 +8,17 @@ import static Utilz.Constants.UI.EnemyConstants.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class LoadSave
 {
     public static final String PLAYER_ATLAS = "player_sprites.png";
     public static final String LEVEL_ATLAS = "outside_sprites.png";
-    public static final String LEVEL_ONE_DATA = "level_one_data_long.png";
     public static final String MENU_BUTTONS = "button_atlas.png";
     public static final String MENU_BACKGROUND = "menu_background.png";
     public static final String PAUSE_BACKGROUND = "pause_menu.png";
@@ -29,6 +31,7 @@ public class LoadSave
     public static final String SMALL_CLOUDS = "small_clouds.png";
     public static final String CRABBY_SPRITE = "crabby_sprite.png";
     public static final String STATUS_BAR = "health_power_bar.png";
+    public static final String COMPLETED_IMG = "completed_sprite.png";
 
     public static BufferedImage GetPlayerAtlas(String fileName)
     {
@@ -56,38 +59,46 @@ public class LoadSave
         return img;
     }
 
-    public static ArrayList<Crabby> GetCrabs()
+    public static ArrayList<BufferedImage> GetAllLevels()
     {
-        BufferedImage img = GetPlayerAtlas(LEVEL_ONE_DATA);
-        ArrayList<Crabby> res = new ArrayList<Crabby>();
-        for (int i = 0; i < img.getHeight(); ++i)
+        URL url = LoadSave.class.getResource("/Levels");
+        File file = null;
+        try
         {
-            for (int j = 0; j < img.getWidth(); ++j)
-            {
-                Color color = new Color(img.getRGB(j, i));
-                int val = color.getGreen();
-                if (val == CRABBY) // Color: 0b009a
-                    res.add(new Crabby(j * Game.TILES_SIZE, i * Game.TILES_SIZE));
-            }
+            file = new File(url.toURI());
         }
-        return res;
-    }
+        catch (URISyntaxException e)
+        {
+            throw new RuntimeException(e);
+        }
+        File[] files = file.listFiles();
 
-    public static int[][] GetLevelData()
-    {
-        BufferedImage img = GetPlayerAtlas(LEVEL_ONE_DATA);
-        int[][] lvData = new int[img.getHeight()][img.getWidth()];
-        for (int i = 0; i < img.getHeight(); ++i)
+        ArrayList<File> sortedFile = new ArrayList<>();
+        for (int i = 0; i < files.length; ++i)
         {
-            for (int j = 0; j < img.getWidth(); ++j)
+            for (File j : files)
             {
-                Color color = new Color(img.getRGB(j, i));
-                int val = color.getRed();
-                if (val >= 48)
-                    val = 0;
-                lvData[i][j] = color.getRed();
+                if (j.getName().equals((i + 1) + ".png"))
+                {
+                    sortedFile.add(j);
+                    break;
+                }
             }
         }
-        return lvData;
+
+        ArrayList<BufferedImage> imgs = new ArrayList<>();
+        for (File i : sortedFile)
+        {
+            try
+            {
+                imgs.add(ImageIO.read(i));
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return imgs;
     }
 }
