@@ -3,6 +3,8 @@ package Entities;
 import GameStates.Playing;
 import Main.Game;
 import Utilz.LoadSave;
+
+import static Utilz.Constants.*;
 import static Utilz.HelpMethods.*;
 
 import java.awt.*;
@@ -15,20 +17,13 @@ import static Utilz.Constants.PlayerConstants.*;
 public class Player extends Entity
 {
     private ArrayList<ArrayList<BufferedImage>> animation;
-    private int aniTick, aniIdx, aniSpeed = 15;
-    private int playerAction = IDLE;
     private boolean moving = false, attacking = false;
-    private boolean left, up, right, down, jump;
-    private float playerSpeed = 0.75f * Game.SCALE;
+    private boolean left, right, jump;
     private int[][] lvlData;
     private float xDrawOffset = 21 * Game.SCALE;
     private float yDrawOffset = 4 * Game.SCALE;
-
-    private float airSpeed = 0;
-    private float gravity = 0.04f * Game.SCALE;
     private float jumpSpeed = -2.75f * Game.SCALE;
     private float fallSpeedAfterCollision = 0.5f * Game.SCALE;
-    private boolean inAir = false;
 
     private BufferedImage statusBarImg;
     private int statusBarWidth = (int) (192 * Game.SCALE);
@@ -40,25 +35,24 @@ public class Player extends Entity
     private int healthBarHeight = (int) (4 * Game.SCALE);
     private int healthBarXStart = (int) (34 * Game.SCALE);
     private int healthBarYStart = (int) (14 * Game.SCALE);
-
-    private int maxHealth = 100;
-    private int curHealth = maxHealth;
     private int healthWidth = healthBarWidth;
 
     private int flipX = 0;
     private int flipW = 1;
 
     private boolean attackChecked;
-
-    private Rectangle2D.Float attackBox;
     private Playing playing;
 
     public Player(float x, float y, int width, int height, Playing playing)
     {
         super(x, y, width, height);
         this.playing = playing;
+        this.state = IDLE;
+        this.maxHealth = 100;
+        this.curHealth = maxHealth;
+        this.walkSpeed = 0.75f * Game.SCALE;
         loadAnimation();
-        intitHitbox(x, y, (int) (20 * Game.SCALE), (int) (27 * Game.SCALE));
+        intitHitbox(20, 27);
         initAttackBox();
     }
 
@@ -119,16 +113,10 @@ public class Player extends Entity
 
     public void render(Graphics g, int lvlOffset)
     {
-        g.drawImage((animation.get(playerAction)).get(aniIdx), (int) (hitbox.x - xDrawOffset) - lvlOffset + flipX, (int) (hitbox.y - yDrawOffset), width * flipW, height, null);
+        g.drawImage((animation.get(state)).get(aniIdx), (int) (hitbox.x - xDrawOffset) - lvlOffset + flipX, (int) (hitbox.y - yDrawOffset), width * flipW, height, null);
         //drawHitbox(g, lvlOffset);
         //drawAttackBox(g, lvlOffset);
         drawUI(g);
-    }
-
-    private void drawAttackBox(Graphics g, int lvlOffsetX)
-    {
-        g.setColor(Color.red);
-        g.drawRect((int) attackBox.x - lvlOffsetX, (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
     }
 
     private void drawUI(Graphics g)
@@ -141,11 +129,11 @@ public class Player extends Entity
     private void updateAnimationTick()
     {
         ++aniTick;
-        if (aniTick >= aniSpeed)
+        if (aniTick >= ANIMATION_SPEED)
         {
             aniTick = 0;
             ++aniIdx;
-            if (aniIdx >= GetSpriteAmount(playerAction))
+            if (aniIdx >= GetSpriteAmount(state))
             {
                 aniIdx = 0;
                 attacking = false;
@@ -156,21 +144,21 @@ public class Player extends Entity
 
     public void setAnimation()
     {
-        int startAni = playerAction;
+        int startAni = state;
         if (moving)
-            playerAction = RUNNING;
+            state = RUNNING;
         else
-            playerAction = IDLE;
+            state = IDLE;
         if (inAir)
         {
             if (airSpeed < 0)
-                playerAction = JUMP;
+                state = JUMP;
             else
-                playerAction = FALLING;
+                state = FALLING;
         }
         if (attacking)
         {
-            playerAction = ATTACK;
+            state = ATTACK;
             if (startAni != ATTACK)
             {
                 aniIdx = 1;
@@ -178,7 +166,7 @@ public class Player extends Entity
                 return;
             }
         }
-        if (startAni != playerAction)
+        if (startAni != state)
             resetAniTick();
     }
 
@@ -197,13 +185,13 @@ public class Player extends Entity
         float xSpeed = 0;
         if (left)
         {
-            xSpeed -= playerSpeed;
+            xSpeed -= walkSpeed;
             flipX = width;
             flipW = -1;
         }
         else if (right)
         {
-            xSpeed += playerSpeed;
+            xSpeed += walkSpeed;
             flipX = 0;
             flipW = 1;
         }
@@ -215,7 +203,7 @@ public class Player extends Entity
             if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, lvlData))
             {
                 hitbox.y += airSpeed;
-                airSpeed += gravity;
+                airSpeed += GRAVITY;
                 updateXPos(xSpeed);
             }
             else
@@ -292,7 +280,7 @@ public class Player extends Entity
 
     public void resetDirBooleans()
     {
-        left = right = up = down = false;
+        left = right = false;
     }
 
     public void setAttacking(boolean attacking)
@@ -310,16 +298,6 @@ public class Player extends Entity
         this.left = left;
     }
 
-    public boolean isUp()
-    {
-        return up;
-    }
-
-    public void setUp(boolean up)
-    {
-        this.up = up;
-    }
-
     public boolean isRight()
     {
         return right;
@@ -328,16 +306,6 @@ public class Player extends Entity
     public void setRight(boolean right)
     {
         this.right = right;
-    }
-
-    public boolean isDown()
-    {
-        return down;
-    }
-
-    public void setDown(boolean down)
-    {
-        this.down = down;
     }
 
     public void setJump(boolean jump)
@@ -351,7 +319,7 @@ public class Player extends Entity
          inAir = false;
          attacking = false;
          moving = false;
-         playerAction = IDLE;
+        state = IDLE;
          curHealth = maxHealth;
          hitbox.x = x;
          hitbox.y = y;
