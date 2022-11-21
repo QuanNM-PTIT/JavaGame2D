@@ -32,6 +32,8 @@ public class LoadSave
     public static final String CRABBY_SPRITE = "crabby_sprite.png";
     public static final String STATUS_BAR = "health_power_bar.png";
     public static final String COMPLETED_IMG = "completed_sprite.png";
+    public static final String POTIONS = "potions_sprites.png";
+    public static final String CONTAINERS = "objects_sprites.png";
 
     public static BufferedImage GetPlayerAtlas(String fileName)
     {

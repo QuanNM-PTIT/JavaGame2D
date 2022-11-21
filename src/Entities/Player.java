@@ -315,14 +315,14 @@ public class Player extends Entity
 
     public void resetAll()
     {
-         resetDirBooleans();
-         inAir = false;
-         attacking = false;
-         moving = false;
+        resetDirBooleans();
+        inAir = false;
+        attacking = false;
+        moving = false;
         state = IDLE;
-         curHealth = maxHealth;
-         hitbox.x = x;
-         hitbox.y = y;
+        curHealth = maxHealth;
+        hitbox.x = x;
+        hitbox.y = y;
         if (!IsEntityOnFloor(hitbox, lvlData))
             inAir = true;
     }
