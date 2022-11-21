@@ -4,6 +4,7 @@ import Entities.Crabby;
 import Main.Game;
 import Objects.GameContainer;
 import Objects.Potion;
+import Objects.Spike;
 import Utilz.HelpMethods;
 
 import static Utilz.HelpMethods.*;
@@ -19,6 +20,7 @@ public class Level
     private ArrayList<Crabby> crabbies;
     private ArrayList<Potion> potions;
     private ArrayList<GameContainer> gameContainers;
+    private ArrayList<Spike> spikes;
     private int lvlTilesWide;
     private int maxTilesOffset;
     private int maxLvlOffset;
@@ -29,13 +31,19 @@ public class Level
         this.img = img;
         createLevelData();
         createEnemies();
-        createPotion();
+        createPotions();
         createContainers();
+        createSpikes();
         calcLevelOffsets();
         calcLevelSpawn();
     }
 
-    private void createPotion()
+    private void createSpikes()
+    {
+        spikes = HelpMethods.GetSpikes(img);
+    }
+
+    private void createPotions()
     {
         potions = HelpMethods.GetPotions(img);
     }
@@ -100,5 +108,10 @@ public class Level
     public ArrayList<GameContainer> getGameContainers()
     {
         return gameContainers;
+    }
+
+    public ArrayList<Spike> getSpikes()
+    {
+        return spikes;
     }
 }

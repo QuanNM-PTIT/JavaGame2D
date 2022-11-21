@@ -80,11 +80,19 @@ public class Player extends Entity
         uppdateAttackBox();
         updatePos();
         if (moving)
+        {
             checkPotionTouched();
+            checkSpikesTouched();
+        }
         if (attacking)
             checkAttack();
         updateAnimationTick();
         setAnimation();
+    }
+
+    private void checkSpikesTouched()
+    {
+        playing.checkSpikesTouched(this);
     }
 
     private void checkPotionTouched()
@@ -262,6 +270,11 @@ public class Player extends Entity
         }
         else if (curHealth >= maxHealth)
             curHealth = maxHealth;
+    }
+
+    public void killed()
+    {
+        curHealth = 0;
     }
 
     public void changePower(int val)

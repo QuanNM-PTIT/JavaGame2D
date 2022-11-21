@@ -1,5 +1,6 @@
 package Objects;
 
+import Entities.Player;
 import GameStates.Playing;
 import Levels.Level;
 import Utilz.LoadSave;
@@ -16,6 +17,8 @@ public class ObjectManager
     private ArrayList<ArrayList<BufferedImage>> potionImg, containerImg;
     private ArrayList<Potion> potions;
     private ArrayList<GameContainer> gameContainers;
+    private ArrayList<Spike> spikes;
+    private BufferedImage spikeImage;
 
     public ObjectManager(Playing playing)
     {
@@ -23,6 +26,13 @@ public class ObjectManager
         loadImages();
         potions = new ArrayList<>();
         gameContainers = new ArrayList<>();
+    }
+
+    public void checkSpikesTouched(Player player)
+    {
+        for (Spike i : spikes)
+            if (i.getHitbox().intersects(player.getHitbox()))
+                player.killed();
     }
 
     public void checkObjectTouched(Rectangle2D.Float hitbox)
@@ -52,7 +62,7 @@ public class ObjectManager
     {
         for (GameContainer i : gameContainers)
         {
-            if (i.isActive())
+            if (i.isActive() && !i.doAnimation)
             {
                 if (attackbox.intersects(i.getHitbox()))
                 {
@@ -88,6 +98,8 @@ public class ObjectManager
                 tmp.add(containerSprite.getSubimage(40 * j, 30 * i, 40, 30));
             containerImg.add(tmp);
         }
+
+        spikeImage = LoadSave.GetPlayerAtlas(LoadSave.TRAP_ATLAS);
     }
 
     public void update()
@@ -104,6 +116,13 @@ public class ObjectManager
     {
         drawPotions(g, xLevelOffset);
         drawContainers(g, xLevelOffset);
+        drawTraps(g, xLevelOffset);
+    }
+
+    private void drawTraps(Graphics g, int xLevelOffset)
+    {
+        for (Spike i : spikes)
+            g.drawImage(spikeImage, (int) (i.getHitbox().x - xLevelOffset), (int) (i.getHitbox().y - i.getyDrawOffset()), SPIKE_WIDTH, SPIKE_HEIGHT, null);
     }
 
     private void drawPotions(Graphics g, int xLevelOffset)
@@ -136,12 +155,15 @@ public class ObjectManager
 
     public void loadObjects(Level newLevel)
     {
-        potions = newLevel.getPotions();
-        gameContainers = newLevel.getGameContainers();
+        potions = new ArrayList<>(newLevel.getPotions());
+        gameContainers = new ArrayList<>(newLevel.getGameContainers());
+        spikes = newLevel.getSpikes();
     }
 
     public void resetAll()
     {
+        loadObjects(playing.getLevelManager().getCurLevel());
+
         for (Potion i : potions)
             i.reset();
         for (GameContainer i : gameContainers)
