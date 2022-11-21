@@ -1,9 +1,11 @@
 package Objects;
 
 import GameStates.Playing;
+import Levels.Level;
 import Utilz.LoadSave;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import static Utilz.Constants.ObjectConstants.*;
@@ -21,10 +23,48 @@ public class ObjectManager
         loadImages();
         potions = new ArrayList<>();
         gameContainers = new ArrayList<>();
-        potions.add(new Potion(300, 300, RED_POTION));
-        potions.add(new Potion(400, 300, BLUE_POTION));
-        gameContainers.add(new GameContainer(500, 300, BARREL));
-        gameContainers.add(new GameContainer(600, 300, BOX));
+    }
+
+    public void checkObjectTouched(Rectangle2D.Float hitbox)
+    {
+        for (Potion i : potions)
+        {
+            if (i.isActive())
+            {
+                if (hitbox.intersects(i.getHitbox()))
+                {
+                    i.setActive(false);
+                    applyEffectToPlayer(i);
+                }
+            }
+        }
+    }
+
+    public void applyEffectToPlayer(Potion potion)
+    {
+        if (potion.getObjType() == RED_POTION)
+            playing.getPlayer().changeHealth(RED_POTION_VALUE);
+        else
+            playing.getPlayer().changePower(BLUE_POTION_VALUE);
+    }
+
+    public void checkObjectHit(Rectangle2D.Float attackbox)
+    {
+        for (GameContainer i : gameContainers)
+        {
+            if (i.isActive())
+            {
+                if (attackbox.intersects(i.getHitbox()))
+                {
+                    i.setDoAnimation(true);
+                    int type = 0;
+                    if (i.getObjType() == BARREL)
+                        type = 1;
+                    potions.add(new Potion((int) (i.getHitbox().x + i.getHitbox().width / 2), (int) (i.getHitbox().y - i.getHitbox().height / 2), type));
+                    return;
+                }
+            }
+        }
     }
 
     private void loadImages()
@@ -92,5 +132,19 @@ public class ObjectManager
                 g.drawImage(containerImg.get(idx).get(i.getAniIdx()), (int) (i.getHitbox().x - i.getxDrawOffset() - xLevelOffset), (int) (i.getHitbox().y - i.getyDrawOffset()), CONTAINER_WIDTH, CONTAINER_HEIGHT, null);
             }
         }
+    }
+
+    public void loadObjects(Level newLevel)
+    {
+        potions = newLevel.getPotions();
+        gameContainers = newLevel.getGameContainers();
+    }
+
+    public void resetAll()
+    {
+        for (Potion i : potions)
+            i.reset();
+        for (GameContainer i : gameContainers)
+            i.reset();
     }
 }

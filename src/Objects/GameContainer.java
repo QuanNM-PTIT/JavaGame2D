@@ -16,16 +16,19 @@ public class GameContainer extends GameObject
     {
         if (objType == BOX)
         {
-            intitHitbox(25, 18);
+            initHitbox(25, 18);
             xDrawOffset = (int) (7 * Game.SCALE);
             yDrawOffset = (int) (12 * Game.SCALE);
         }
         else
         {
-            intitHitbox(23, 25);
+            initHitbox(23, 25);
             xDrawOffset = (int) (8 * Game.SCALE);
             yDrawOffset = (int) (5 * Game.SCALE);
         }
+
+        hitbox.y += yDrawOffset + (int) (2 * Game.SCALE);
+        hitbox.x += xDrawOffset / 2;
     }
 
     public void update()

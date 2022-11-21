@@ -65,6 +65,7 @@ public class Playing extends State implements Statemethods
     private void loadStartLevel()
     {
         enemyManager.loadEnemies(levelManager.getCurLevel());
+        objectManager.loadObjects(levelManager.getCurLevel());
     }
 
     private void calcLevelOffsets()
@@ -152,6 +153,7 @@ public class Playing extends State implements Statemethods
         levelCompleted = false;
         player.resetAll();
         enemyManager.resetAllEnemies();
+        objectManager.resetAll();
     }
 
     public void setGameOver(boolean gameOver)
@@ -162,6 +164,16 @@ public class Playing extends State implements Statemethods
     public void checkEnemyHit(Rectangle2D.Float attackBox)
     {
         enemyManager.checkEnemyHit(attackBox);
+    }
+
+    public void checkPotionTouched(Rectangle2D.Float hitbox)
+    {
+        objectManager.checkObjectTouched(hitbox);
+    }
+
+    public void checkObjectHit(Rectangle2D.Float attackBox)
+    {
+        objectManager.checkObjectHit(attackBox);
     }
 
     public void mouseDragged(MouseEvent e)
