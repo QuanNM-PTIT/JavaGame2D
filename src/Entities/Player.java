@@ -1,5 +1,6 @@
 package Entities;
 
+import Audio.AudioPlayer;
 import GameStates.Playing;
 import Main.Game;
 import Utilz.LoadSave;
@@ -80,9 +81,14 @@ public class Player extends Entity
                 state = DEAD;
                 aniIdx = aniTick = 0;
                 playing.setPlayerDying(true);
+                playing.getGame().getAudioPlayer().playEffect(AudioPlayer.DIE);
             }
             else if (aniIdx == GetSpriteAmount(DEAD) - 1 && aniTick >= ANIMATION_SPEED - 1)
+            {
                 playing.setGameOver(true);
+                playing.getGame().getAudioPlayer().stopSong();
+                playing.getGame().getAudioPlayer().playEffect(AudioPlayer.GAMEOVER);
+            }
             else
                 updateAnimationTick();
             return;
@@ -119,6 +125,7 @@ public class Player extends Entity
         attackChecked = true;
         playing.checkEnemyHit(attackBox);
         playing.checkObjectHit(attackBox);
+        playing.getGame().getAudioPlayer().playAttackSound();
     }
 
     private void uppdateAttackBox()
@@ -253,6 +260,7 @@ public class Player extends Entity
     {
         if (inAir)
             return;
+        playing.getGame().getAudioPlayer().playEffect(AudioPlayer.JUMP);
         inAir = true;
         airSpeed = jumpSpeed;
     }

@@ -79,4 +79,9 @@ public class LevelManager
     {
         return levels.size();
     }
+
+    public int getLevelIdx()
+    {
+        return levelIdx;
+    }
 }
