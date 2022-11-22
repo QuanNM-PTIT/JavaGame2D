@@ -2,6 +2,7 @@ package Levels;
 
 import Entities.Crabby;
 import Main.Game;
+import Objects.Cannon;
 import Objects.GameContainer;
 import Objects.Potion;
 import Objects.Spike;
@@ -21,6 +22,7 @@ public class Level
     private ArrayList<Potion> potions;
     private ArrayList<GameContainer> gameContainers;
     private ArrayList<Spike> spikes;
+    private ArrayList<Cannon> cannons;
     private int lvlTilesWide;
     private int maxTilesOffset;
     private int maxLvlOffset;
@@ -34,8 +36,14 @@ public class Level
         createPotions();
         createContainers();
         createSpikes();
+        createCannons();
         calcLevelOffsets();
         calcLevelSpawn();
+    }
+
+    private void createCannons()
+    {
+        cannons = HelpMethods.GetCannons(img);
     }
 
     private void createSpikes()
@@ -113,5 +121,10 @@ public class Level
     public ArrayList<Spike> getSpikes()
     {
         return spikes;
+    }
+
+    public ArrayList<Cannon> getCannons()
+    {
+        return cannons;
     }
 }

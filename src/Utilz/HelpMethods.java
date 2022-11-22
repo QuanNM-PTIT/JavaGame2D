@@ -2,6 +2,7 @@ package Utilz;
 
 import Entities.Crabby;
 import Main.Game;
+import Objects.Cannon;
 import Objects.GameContainer;
 import Objects.Potion;
 import Objects.Spike;
@@ -81,18 +82,29 @@ public class HelpMethods
         return false;
     }
 
-    public static boolean IsAllWalkable(int xStart, int xEnd, int y, int[][] lvlData)
+    public static boolean IsCannonCanSeePlayer(int[][] lvlData, Rectangle2D.Float firstHitbox, Rectangle2D.Float secondHitbox, int yTile)
+    {
+        int firstXTile = (int) (firstHitbox.x / Game.TILES_SIZE);
+        int secondXTile = (int) (secondHitbox.x / Game.TILES_SIZE);
+        if (firstXTile > secondXTile)
+            return IsAllTilesClear(secondXTile, firstXTile, yTile, lvlData);
+        return IsAllTilesClear(firstXTile, secondXTile, yTile, lvlData);
+    }
+
+    public static boolean IsAllTilesClear(int xStart, int xEnd, int y, int[][] lvlData)
     {
         for (int i = 0; i < xEnd - xStart; ++i)
-        {
             if (IsTileSolid(xStart + i, y, lvlData))
                 return false;
-            if (y + 1 < lvlData.length)
-            {
+        return true;
+    }
+
+    public static boolean IsAllWalkable(int xStart, int xEnd, int y, int[][] lvlData)
+    {
+        if (IsAllTilesClear(xStart, xEnd, y, lvlData))
+            for (int i = 0; i < xEnd - xStart; ++i)
                 if (!IsTileSolid(xStart + i, y + 1, lvlData))
                     return false;
-            }
-        }
         return true;
     }
 
@@ -196,6 +208,22 @@ public class HelpMethods
                 int val = color.getBlue();
                 if (val == SPIKE)
                     res.add(new Spike(j * Game.TILES_SIZE, i * Game.TILES_SIZE, SPIKE));
+            }
+        }
+        return res;
+    }
+
+    public static ArrayList<Cannon> GetCannons(BufferedImage img)
+    {
+        ArrayList<Cannon> res = new ArrayList<Cannon>();
+        for (int i = 0; i < img.getHeight(); ++i)
+        {
+            for (int j = 0; j < img.getWidth(); ++j)
+            {
+                Color color = new Color(img.getRGB(j, i));
+                int val = color.getBlue();
+                if (val == CANNON_LEFT || val == CANNON_RIGHT)
+                    res.add(new Cannon(j * Game.TILES_SIZE, i * Game.TILES_SIZE, val));
             }
         }
         return res;
