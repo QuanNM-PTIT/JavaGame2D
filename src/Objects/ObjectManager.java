@@ -11,7 +11,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import static Utilz.Constants.ObjectConstants.*;
+import static Utilz.Constants.Projectiles.*;
 import static Utilz.HelpMethods.IsCannonCanSeePlayer;
+import static Utilz.HelpMethods.IsProjectileHittingLevel;
 
 public class ObjectManager
 {
@@ -20,9 +22,11 @@ public class ObjectManager
     private ArrayList<BufferedImage> cannonImgs;
     private ArrayList<Potion> potions;
     private ArrayList<GameContainer> gameContainers;
+    private ArrayList<Projectile> projectiles = new ArrayList<>();
     private ArrayList<Spike> spikes;
     private ArrayList<Cannon> cannons;
     private BufferedImage spikeImage;
+    private BufferedImage ballImg;
 
     public ObjectManager(Playing playing)
     {
@@ -108,6 +112,7 @@ public class ObjectManager
         BufferedImage tmp = LoadSave.GetPlayerAtlas(LoadSave.CANNON_ATLAS);
         for (int i = 0; i < 7; ++i)
             cannonImgs.add(tmp.getSubimage(i * 40, 0, 40, 26));
+        ballImg = LoadSave.GetPlayerAtlas(LoadSave.BALL_ATLAS);
     }
 
     public void update(int[][] lvlData, Player player)
@@ -120,25 +125,50 @@ public class ObjectManager
                 i.update();
 
         updateCannons(lvlData, player);
+        updateProjectile(lvlData, player);
+    }
+
+    private void updateProjectile(int[][] lvlData, Player player)
+    {
+        for (Projectile i : projectiles)
+        {
+            if (i.isActive())
+            {
+                i.updatePos();
+                if (i.getHitbox().intersects(player.getHitbox()))
+                {
+                    player.changeHealth(-25);
+                    i.setActive(false);
+                }
+                else if (IsProjectileHittingLevel(i, lvlData))
+                    i.setActive(false);
+            }
+        }
     }
 
     private void updateCannons(int[][] lvlData, Player player)
     {
         for (Cannon i : cannons)
         {
-            //if (!i.doAnimation)
+            if (!i.doAnimation)
                 if (i.getTileY() == player.getTileY())
                     if (isPlayerInRange(i, player))
                         if (isPlayerInFrontOfCannon(i, player))
                             if (IsCannonCanSeePlayer(lvlData, player.getHitbox(), i.getHitbox(), i.getTileY()))
-                                shootCannon(i);
+                                i.setDoAnimation(true);
             i.update();
+            if (i.getAniIdx() == 4 && i.getAniTick() == 0)
+                shootCannon(i);
         }
     }
 
     private void shootCannon(Cannon i)
     {
         i.setDoAnimation(true);
+        int dir = 1;
+        if (i.getObjType() == CANNON_LEFT)
+            dir = -1;
+        projectiles.add(new Projectile((int) i.getHitbox().x, (int) i.getHitbox().y, dir));
     }
 
     private boolean isPlayerInFrontOfCannon(Cannon i, Player player)
@@ -167,7 +197,15 @@ public class ObjectManager
         drawPotions(g, xLevelOffset);
         drawContainers(g, xLevelOffset);
         drawTraps(g, xLevelOffset);
+        drawProjectiles(g, xLevelOffset);
         drawCannons(g, xLevelOffset);
+    }
+
+    private void drawProjectiles(Graphics g, int xLevelOffset)
+    {
+        for (Projectile i : projectiles)
+            if (i.isActive())
+                g.drawImage(ballImg, (int) (i.getHitbox().x - xLevelOffset), (int) (i.getHitbox().y), BALL_WIDTH, BALL_HEIGHT, null);
     }
 
     private void drawCannons(Graphics g, int xLevelOffset)
@@ -225,6 +263,7 @@ public class ObjectManager
         gameContainers = new ArrayList<>(newLevel.getGameContainers());
         spikes = newLevel.getSpikes();
         cannons = newLevel.getCannons();
+        projectiles.clear();
     }
 
     public void resetAll()

@@ -104,4 +104,9 @@ public class GameObject
     {
         this.doAnimation = doAnimation;
     }
+
+    public int getAniTick()
+    {
+        return aniTick;
+    }
 }

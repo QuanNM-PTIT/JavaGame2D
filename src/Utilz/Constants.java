@@ -7,6 +7,15 @@ public class Constants
     public static final float GRAVITY = 0.04f * Game.SCALE;
     public static final int ANIMATION_SPEED = 25;
 
+    public static class Projectiles
+    {
+        public static final int BALL_WIDTH_DEFAULT = 15;
+        public static final int BALL_HEIGHT_DEFAULT = 15;
+        public static final int BALL_WIDTH = (int) (Game.SCALE * BALL_WIDTH_DEFAULT);
+        public static final int BALL_HEIGHT = (int) (Game.SCALE * BALL_HEIGHT_DEFAULT);
+        public static final float SPEED = 0.75f * Game.SCALE;
+    }
+
     public static class ObjectConstants
     {
 

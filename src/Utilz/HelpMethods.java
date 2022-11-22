@@ -2,10 +2,7 @@ package Utilz;
 
 import Entities.Crabby;
 import Main.Game;
-import Objects.Cannon;
-import Objects.GameContainer;
-import Objects.Potion;
-import Objects.Spike;
+import Objects.*;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -115,6 +112,11 @@ public class HelpMethods
         if (firstXTile > secondXTile)
             return IsAllWalkable(secondXTile, firstXTile, yTile, lvlData);
         return IsAllWalkable(firstXTile, secondXTile, yTile, lvlData);
+    }
+
+    public static boolean IsProjectileHittingLevel(Projectile projectile, int[][] lvlData)
+    {
+        return IsSolid(projectile.getHitbox().x + projectile.getHitbox().width / 2, projectile.getHitbox().y + projectile.getHitbox().height / 2, lvlData);
     }
 
     public static int[][] GetLevelData(BufferedImage img)
