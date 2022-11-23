@@ -53,4 +53,9 @@ public abstract class Entity
     {
         return aniIdx;
     }
+
+    public int getCurHealth()
+    {
+        return curHealth;
+    }
 }

@@ -154,14 +154,7 @@ public class Player extends Entity
 
     private void updateAttackBox()
     {
-        if (right || powerAttackActive && flipW == 1)
-        {
-            attackBox.x = hitbox.x + hitbox.width + (int) (10 * Game.SCALE);
-        }
-        else if (left || powerAttackActive && flipW == -1)
-        {
-            attackBox.x = hitbox.x - hitbox.width - (int) (10 * Game.SCALE);
-        }
+        resetAttackBox();
         attackBox.y = hitbox.y + 10 * Game.SCALE;
     }
 
@@ -433,12 +426,22 @@ public class Player extends Entity
         inAir = false;
         attacking = false;
         moving = false;
+        airSpeed = 0f;
         state = IDLE;
         curHealth = maxHealth;
         hitbox.x = x;
         hitbox.y = y;
+        resetAttackBox();
         if (!IsEntityOnFloor(hitbox, lvlData))
             inAir = true;
+    }
+
+    private void resetAttackBox()
+    {
+        if (right || powerAttackActive && flipW == 1)
+            attackBox.x = hitbox.x + hitbox.width + (int) (10 * Game.SCALE);
+        else if (left || powerAttackActive && flipW == -1)
+            attackBox.x = hitbox.x - hitbox.width - (int) (10 * Game.SCALE);
     }
 
     public int getTileY()

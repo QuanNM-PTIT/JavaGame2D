@@ -64,10 +64,13 @@ public class EnemyManager
         {
             if (i.isActive())
             {
-                if (attackBox.intersects(i.getHitbox()))
+                if (i.getCurHealth() > 0)
                 {
-                    i.hurt(10);
-                    return;
+                    if (attackBox.intersects(i.getHitbox()))
+                    {
+                        i.hurt(10);
+                        return;
+                    }
                 }
             }
         }
