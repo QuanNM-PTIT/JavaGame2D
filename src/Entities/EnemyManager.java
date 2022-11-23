@@ -3,7 +3,8 @@ package Entities;
 import GameStates.Playing;
 import Levels.Level;
 import Utilz.LoadSave;
-import static Utilz.Constants.UI.EnemyConstants.*;
+
+import static Utilz.Constants.EnemyConstants.*;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -14,7 +15,8 @@ public class EnemyManager
 {
     private Playing playing;
     private ArrayList<ArrayList<BufferedImage>> crabbyArr;
-    private ArrayList<Crabby> crabbies = new ArrayList<Crabby>();
+    private ArrayList<Crabby> crabbies;
+    private Level curLevel;
 
     public EnemyManager(Playing playing)
     {
@@ -25,16 +27,17 @@ public class EnemyManager
     public void loadEnemies(Level level)
     {
         crabbies = level.getCrabbies();
+        curLevel = level;
     }
 
-    public void update(int[][] lvlData, Player player)
+    public void update(int[][] lvlData, Playing playing)
     {
         boolean isAnyActive = false;
         for (Crabby i : crabbies)
         {
             if (i.isActive())
             {
-                i.update(lvlData, player);
+                i.update(lvlData, playing);
                 isAnyActive = true;
             }
         }
@@ -68,7 +71,7 @@ public class EnemyManager
                 {
                     if (attackBox.intersects(i.getHitbox()))
                     {
-                        i.hurt(10);
+                        i.hurt(20);
                         return;
                     }
                 }
@@ -76,9 +79,25 @@ public class EnemyManager
         }
     }
 
+    public void update(int[][] lvlData)
+    {
+        boolean isAnyActive = false;
+        for (Crabby c : curLevel.getCrabbies())
+        {
+            if (c.isActive())
+            {
+                c.update(lvlData, playing);
+                isAnyActive = true;
+            }
+        }
+
+        if (!isAnyActive)
+            playing.setLevelCompleted(true);
+    }
+
     private void loadEnemyImages()
     {
-        BufferedImage img = LoadSave.GetPlayerAtlas(LoadSave.CRABBY_SPRITE);
+        BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.CRABBY_SPRITE);
         crabbyArr = new ArrayList<ArrayList<BufferedImage>>();
         for (int i = 0; i < 5; ++i)
         {

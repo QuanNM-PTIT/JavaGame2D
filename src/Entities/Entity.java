@@ -5,6 +5,9 @@ import Main.Game;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
+import static Utilz.Constants.Directions.*;
+import static Utilz.HelpMethods.CanMoveHere;
+
 public abstract class Entity
 {
     protected float x, y;
@@ -18,6 +21,10 @@ public abstract class Entity
     protected int curHealth;
     protected Rectangle2D.Float attackBox;
     protected float walkSpeed;
+
+    protected int pushBackDir;
+    protected float pushDrawOffset;
+    protected int pushBackOffsetDir = UP;
 
     public Entity(float x, float y, int width, int height)
     {
@@ -39,6 +46,37 @@ public abstract class Entity
         g.drawRect((int) attackBox.x - lvlOffsetX, (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
     }
 
+    protected void updatePushBackDrawOffset()
+    {
+        float speed = 0.95f;
+        float limit = -30f;
+
+        if (pushBackOffsetDir == UP)
+        {
+            pushDrawOffset -= speed;
+            if (pushDrawOffset <= limit)
+                pushBackOffsetDir = DOWN;
+        }
+        else
+        {
+            pushDrawOffset += speed;
+            if (pushDrawOffset >= 0)
+                pushDrawOffset = 0;
+        }
+    }
+
+    protected void pushBack(int pushBackDir, int[][] lvlData, float speedMulti)
+    {
+        float xSpeed = 0;
+        if (pushBackDir == LEFT)
+            xSpeed = -walkSpeed;
+        else
+            xSpeed = walkSpeed;
+
+        if (CanMoveHere(hitbox.x + xSpeed * speedMulti, hitbox.y, hitbox.width, hitbox.height, lvlData))
+            hitbox.x += xSpeed * speedMulti;
+    }
+
     protected void initHitbox(int width, int height)
     {
         hitbox = new Rectangle2D.Float(x, y, (int) (width * Game.SCALE), (int) (height * Game.SCALE));
@@ -54,8 +92,20 @@ public abstract class Entity
         return aniIdx;
     }
 
+    public int getState()
+    {
+        return state;
+    }
+
     public int getCurHealth()
     {
         return curHealth;
+    }
+
+    protected void newState(int state)
+    {
+        this.state = state;
+        aniTick = 0;
+        aniIdx = 0;
     }
 }

@@ -34,7 +34,7 @@ public class LoadSave
     public static final String DEATH_SCREEN = "death_screen.png";
     public static final String OPTIONS_BACKGROUND = "options_background.png";
 
-    public static BufferedImage GetPlayerAtlas(String fileName)
+    public static BufferedImage GetSpriteAtlas(String fileName)
     {
         BufferedImage img = null;
         InputStream inp = LoadSave.class.getResourceAsStream("/" + fileName);

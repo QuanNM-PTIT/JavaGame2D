@@ -21,7 +21,7 @@ public class UrmButton extends PauseButton
 
     private void loadImgs()
     {
-        BufferedImage img = LoadSave.GetPlayerAtlas(LoadSave.URM_BUTTONS);
+        BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.URM_BUTTONS);
         imgs = new ArrayList<BufferedImage>();
         for (int i = 0; i < 3; ++i)
             imgs.add(img.getSubimage(i * URM_SIZE_DEFAULT, rowIdx * URM_SIZE_DEFAULT, URM_SIZE_DEFAULT, URM_SIZE_DEFAULT));

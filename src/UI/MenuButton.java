@@ -37,7 +37,7 @@ public class MenuButton
     private void loadImages()
     {
         imgs = new ArrayList<BufferedImage>();
-        BufferedImage tmp = LoadSave.GetPlayerAtlas(LoadSave.MENU_BUTTONS);
+        BufferedImage tmp = LoadSave.GetSpriteAtlas(LoadSave.MENU_BUTTONS);
         for (int i = 0; i < 3; ++i)
             imgs.add(tmp.getSubimage(i * B_WIDTH_DEFAULT, rowIdx * B_HEIGHT_DEFAULT, B_WIDTH_DEFAULT, B_HEIGHT_DEFAULT));
     }

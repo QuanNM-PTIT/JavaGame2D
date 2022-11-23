@@ -1,5 +1,6 @@
 package Objects;
 
+import Entities.Enemy;
 import Entities.Player;
 import GameStates.Playing;
 import Levels.Level;
@@ -10,6 +11,8 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import static Utilz.Constants.Directions.*;
 import static Utilz.Constants.ObjectConstants.*;
 import static Utilz.Constants.Projectiles.*;
 import static Utilz.HelpMethods.IsCannonCanSeePlayer;
@@ -27,13 +30,15 @@ public class ObjectManager
     private ArrayList<Cannon> cannons;
     private BufferedImage spikeImage;
     private BufferedImage ballImg;
+    private Level currentLevel;
 
     public ObjectManager(Playing playing)
     {
         this.playing = playing;
-        loadImages();
+        currentLevel = playing.getLevelManager().getCurLevel();
         potions = new ArrayList<>();
         gameContainers = new ArrayList<>();
+        loadImages();
     }
 
     public void checkSpikesTouched(Player player)
@@ -41,6 +46,13 @@ public class ObjectManager
         for (Spike i : spikes)
             if (i.getHitbox().intersects(player.getHitbox()))
                 player.killed();
+    }
+
+    public void checkSpikesTouched(Enemy e)
+    {
+        for (Spike s : currentLevel.getSpikes())
+            if (s.getHitbox().intersects(e.getHitbox()))
+                e.hurt(200);
     }
 
     public void checkObjectTouched(Rectangle2D.Float hitbox)
@@ -87,7 +99,7 @@ public class ObjectManager
 
     private void loadImages()
     {
-        BufferedImage potionSprite = LoadSave.GetPlayerAtlas(LoadSave.POTIONS);
+        BufferedImage potionSprite = LoadSave.GetSpriteAtlas(LoadSave.POTIONS);
         potionImgs = new ArrayList<>();
         for (int i = 0; i < 2; ++i)
         {
@@ -97,7 +109,7 @@ public class ObjectManager
             potionImgs.add(tmp);
         }
 
-        BufferedImage containerSprite = LoadSave.GetPlayerAtlas(LoadSave.CONTAINERS);
+        BufferedImage containerSprite = LoadSave.GetSpriteAtlas(LoadSave.CONTAINERS);
         containerImgs = new ArrayList<>();
         for (int i = 0; i < 2; ++i)
         {
@@ -107,12 +119,12 @@ public class ObjectManager
             containerImgs.add(tmp);
         }
 
-        spikeImage = LoadSave.GetPlayerAtlas(LoadSave.TRAP_ATLAS);
+        spikeImage = LoadSave.GetSpriteAtlas(LoadSave.TRAP_ATLAS);
         cannonImgs = new ArrayList<>();
-        BufferedImage tmp = LoadSave.GetPlayerAtlas(LoadSave.CANNON_ATLAS);
+        BufferedImage tmp = LoadSave.GetSpriteAtlas(LoadSave.CANNON_ATLAS);
         for (int i = 0; i < 7; ++i)
             cannonImgs.add(tmp.getSubimage(i * 40, 0, 40, 26));
-        ballImg = LoadSave.GetPlayerAtlas(LoadSave.BALL_ATLAS);
+        ballImg = LoadSave.GetSpriteAtlas(LoadSave.BALL_ATLAS);
     }
 
     public void update(int[][] lvlData, Player player)
@@ -137,7 +149,10 @@ public class ObjectManager
                 i.updatePos();
                 if (i.getHitbox().intersects(player.getHitbox()))
                 {
-                    player.changeHealth(-25);
+                    int dir = LEFT;
+                    if (i.getHitbox().x < player.getHitbox().x)
+                        dir = RIGHT;
+                    player.changeHealthByShooted(-25, dir);
                     i.setActive(false);
                 }
                 else if (IsProjectileHittingLevel(i, lvlData))

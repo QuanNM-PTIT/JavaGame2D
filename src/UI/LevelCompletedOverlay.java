@@ -36,7 +36,7 @@ public class LevelCompletedOverlay
 
     private void initImg()
     {
-        img = LoadSave.GetPlayerAtlas(LoadSave.COMPLETED_IMG);
+        img = LoadSave.GetSpriteAtlas(LoadSave.COMPLETED_IMG);
         backgroundW = (int) (img.getWidth() * Game.SCALE);
         backgroundH = (int) (img.getHeight() * Game.SCALE);
         backgroundX = Game.GAME_WIDTH / 2 - backgroundW / 2;

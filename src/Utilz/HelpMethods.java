@@ -9,8 +9,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import static Utilz.Constants.EnemyConstants.*;
 import static Utilz.Constants.ObjectConstants.*;
-import static Utilz.Constants.UI.EnemyConstants.CRABBY;
 
 public class HelpMethods
 {
@@ -69,6 +69,14 @@ public class HelpMethods
         if (xSpeed > 0)
             return IsSolid(hitbox.x + hitbox.width + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
         return IsSolid(hitbox.x + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
+    }
+
+    public static boolean IsFloor(Rectangle2D.Float hitbox, int[][] lvlData)
+    {
+        if (!IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 1, lvlData))
+            if (!IsSolid(hitbox.x, hitbox.y + hitbox.height + 1, lvlData))
+                return false;
+        return true;
     }
 
     public static boolean IsTileSolid(int xTile, int yTile, int[][] lvlData)

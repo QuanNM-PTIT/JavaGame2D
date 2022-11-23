@@ -9,7 +9,7 @@ import UI.GameOverOverlay;
 import UI.LevelCompletedOverlay;
 import UI.PauseOverlay;
 import Utilz.LoadSave;
-import static Utilz.Constants.UI.Environment.*;
+import static Utilz.Constants.Environment.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -46,9 +46,9 @@ public class Playing extends State implements Statemethods
     {
         super(game);
         initClasses();
-        backgroundImg = LoadSave.GetPlayerAtlas(LoadSave.PLAYING_BG_IMG);
-        bigCloud = LoadSave.GetPlayerAtlas(LoadSave.BIG_CLOUDS);
-        smallCloud = LoadSave.GetPlayerAtlas(LoadSave.SMALL_CLOUDS);
+        backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.PLAYING_BG_IMG);
+        bigCloud = LoadSave.GetSpriteAtlas(LoadSave.BIG_CLOUDS);
+        smallCloud = LoadSave.GetSpriteAtlas(LoadSave.SMALL_CLOUDS);
         smallCloudsPos = new ArrayList<Integer>();
         for (int i = 0; i < 8; ++i)
             smallCloudsPos.add((int) (90 * Game.SCALE) + rnd.nextInt((int) (100 * Game.SCALE)));
@@ -60,7 +60,7 @@ public class Playing extends State implements Statemethods
     {
         resetAll();
         levelManager.loadNextLevel();
-        player.setPlayerSpawn(levelManager.getCurLevel().getPlayerSpawn());
+        player.setSpawn(levelManager.getCurLevel().getPlayerSpawn());
     }
 
     private void loadStartLevel()
@@ -80,7 +80,7 @@ public class Playing extends State implements Statemethods
         enemyManager = new EnemyManager(this);
         objectManager = new ObjectManager(this);
         player = new Player(200, 200, (int) (64 * game.SCALE), (int) (40 * game.SCALE), this);
-        player.setPlayerSpawn(levelManager.getCurLevel().getPlayerSpawn());
+        player.setSpawn(levelManager.getCurLevel().getPlayerSpawn());
         player.loadLvlData(levelManager.getCurLevel().getLevelData());
         pauseOverlay = new PauseOverlay(this);
         gameOverOverlay = new GameOverOverlay(this);
@@ -106,8 +106,8 @@ public class Playing extends State implements Statemethods
         {
             levelManager.update();
             objectManager.update(levelManager.getCurLevel().getLevelData(), player);
-            enemyManager.update(levelManager.getCurLevel().getLevelData(), player);
             player.update();
+            enemyManager.update(levelManager.getCurLevel().getLevelData());
             checkCloseToBorder();
         }
     }

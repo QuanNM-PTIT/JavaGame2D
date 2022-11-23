@@ -31,7 +31,7 @@ public class VolumeButton extends PauseButton
 
     private void loadImgs()
     {
-        BufferedImage img = LoadSave.GetPlayerAtlas(LoadSave.VOLUME_BUTTONS);
+        BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.VOLUME_BUTTONS);
         imgs = new ArrayList<BufferedImage>();
         for (int i = 0; i < 3; ++i)
             imgs.add(img.getSubimage(i * VOLUME_DEFAULT_WIDTH, 0, VOLUME_DEFAULT_WIDTH, VOLUME_DEFAULT_HEIGHT));
