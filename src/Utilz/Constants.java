@@ -26,6 +26,8 @@ public class Constants
         public static final int SPIKE = 4;
         public static final int CANNON_LEFT = 5;
         public static final int CANNON_RIGHT = 6;
+        public static final int SPACE_GATE = 7;
+
 
         public static final int RED_POTION_VALUE = 15;
         public static final int BLUE_POTION_VALUE = 10;
@@ -50,6 +52,11 @@ public class Constants
         public static final int CANNON_WIDTH = (int) (Game.SCALE * CANNON_WIDTH_DEFAULT);
         public static final int CANNON_HEIGHT = (int) (Game.SCALE * CANNON_HEIGHT_DEFAULT);
 
+        public static final int SPACE_GATE_WIDTH_DEFAULT = 100;
+        public static final int SPACE_GATE_HEIGHT_DEFAULT = 100;
+        public static final int SPACE_GATE_WIDTH = (int) (Game.SCALE * SPACE_GATE_WIDTH_DEFAULT);
+        public static final int SPACE_GATE_HEIGHT = (int) (Game.SCALE * SPACE_GATE_HEIGHT_DEFAULT);
+
         public static int GetSpriteAmount(int object_type)
         {
             switch (object_type)
@@ -60,6 +67,8 @@ public class Constants
                     return 8;
                 case CANNON_LEFT, CANNON_RIGHT:
                     return 7;
+                case SPACE_GATE:
+                    return 91;
             }
             return 1;
         }

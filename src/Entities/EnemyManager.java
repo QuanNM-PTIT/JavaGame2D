@@ -72,6 +72,8 @@ public class EnemyManager
                     if (attackBox.intersects(i.getHitbox()))
                     {
                         i.hurt(20);
+                        if (i.curHealth <= 0)
+                            playing.getObjectManager().addPotion(i.getHitbox());
                         return;
                     }
                 }
@@ -92,7 +94,7 @@ public class EnemyManager
         }
 
         if (!isAnyActive)
-            playing.setLevelCompleted(true);
+            playing.getObjectManager().openGate();
     }
 
     private void loadEnemyImages()

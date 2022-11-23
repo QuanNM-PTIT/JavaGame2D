@@ -238,4 +238,20 @@ public class HelpMethods
         }
         return res;
     }
+
+    public static ArrayList<SpaceGate> GetSpaceGate(BufferedImage img)
+    {
+        ArrayList<SpaceGate> res = new ArrayList<SpaceGate>();
+        for (int i = 0; i < img.getHeight(); ++i)
+        {
+            for (int j = 0; j < img.getWidth(); ++j)
+            {
+                Color color = new Color(img.getRGB(j, i));
+                int val = color.getBlue();
+                if (val == 100)
+                    res.add(new SpaceGate(j * Game.TILES_SIZE, i * Game.TILES_SIZE, val));
+            }
+        }
+        return res;
+    }
 }

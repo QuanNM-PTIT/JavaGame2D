@@ -78,10 +78,10 @@ public class Playing extends State implements Statemethods
     {
         levelManager = new LevelManager(game);
         enemyManager = new EnemyManager(this);
-        objectManager = new ObjectManager(this);
         player = new Player(200, 200, (int) (64 * game.SCALE), (int) (40 * game.SCALE), this);
         player.setSpawn(levelManager.getCurLevel().getPlayerSpawn());
         player.loadLvlData(levelManager.getCurLevel().getLevelData());
+        objectManager = new ObjectManager(this);
         pauseOverlay = new PauseOverlay(this);
         gameOverOverlay = new GameOverOverlay(this);
         levelCompletedOverlay = new LevelCompletedOverlay(this);
@@ -132,9 +132,9 @@ public class Playing extends State implements Statemethods
         g.drawImage(backgroundImg, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
         drawClouds(g);
         levelManager.draw(g, xLvlOffset);
-        player.render(g, xLvlOffset);
         enemyManager.draw(g, xLvlOffset);
         objectManager.draw(g, xLvlOffset);
+        player.render(g, xLvlOffset);
         if (paused)
         {
             g.setColor(new Color(0, 0, 0, 125));
@@ -179,6 +179,11 @@ public class Playing extends State implements Statemethods
     public void checkPotionTouched(Rectangle2D.Float hitbox)
     {
         objectManager.checkObjectTouched(hitbox);
+    }
+
+    public void checkIsInGate(Rectangle2D.Float hitbox)
+    {
+        objectManager.checkIsInGate(hitbox);
     }
 
     public void checkObjectHit(Rectangle2D.Float attackBox)

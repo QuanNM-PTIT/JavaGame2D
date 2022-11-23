@@ -54,6 +54,7 @@ public class Player extends Entity
     private int powerAttackTick = 0;
     private int powerGrowSpeed = 15;
     private int powerGrowTick;
+    private boolean isActive = true;
 
     private boolean attackChecked;
     private Playing playing;
@@ -143,6 +144,7 @@ public class Player extends Entity
         {
             checkPotionTouched();
             checkSpikesTouched();
+            checkIsInGate();
             tileY = (int) (hitbox.y / Game.TILES_SIZE);
             if (powerAttackActive)
             {
@@ -170,6 +172,11 @@ public class Player extends Entity
     private void checkPotionTouched()
     {
         playing.checkPotionTouched(hitbox);
+    }
+
+    private void checkIsInGate()
+    {
+        playing.checkIsInGate(hitbox);
     }
 
     private void checkAttack()
@@ -237,7 +244,8 @@ public class Player extends Entity
 
     public void render(Graphics g, int lvlOffset)
     {
-        g.drawImage(animations.get(state).get(aniIdx), (int) (hitbox.x - xDrawOffset) - lvlOffset + flipX, (int) (hitbox.y - yDrawOffset + (int) (pushDrawOffset)), width * flipW, height, null);
+        if (isActive)
+            g.drawImage(animations.get(state).get(aniIdx), (int) (hitbox.x - xDrawOffset) - lvlOffset + flipX, (int) (hitbox.y - yDrawOffset + (int) (pushDrawOffset)), width * flipW, height, null);
 //		drawHitbox(g, lvlOffset);
 //		drawAttackBox(g, lvlOffset);
         drawUI(g);
@@ -245,14 +253,11 @@ public class Player extends Entity
 
     private void drawUI(Graphics g)
     {
-        // Background ui
         g.drawImage(statusBarImg, statusBarX, statusBarY, statusBarWidth, statusBarHeight, null);
 
-        // Health bar
         g.setColor(Color.red);
         g.fillRect(healthBarXStart + statusBarX, healthBarYStart + statusBarY, healthWidth, healthBarHeight);
 
-        // Power Bar
         g.setColor(Color.yellow);
         g.fillRect(powerBarXStart + statusBarX, powerBarYStart + statusBarY, powerWidth, powerBarHeight);
     }
@@ -554,6 +559,8 @@ public class Player extends Entity
         hitbox.y = y;
         resetAttackBox();
 
+        isActive = true;
+
         if (!IsEntityOnFloor(hitbox, lvlData))
             inAir = true;
     }
@@ -580,5 +587,15 @@ public class Player extends Entity
             powerAttackActive = true;
             changePower(-60);
         }
+    }
+
+    public boolean isActive()
+    {
+        return isActive;
+    }
+
+    public void setActive(boolean active)
+    {
+        isActive = active;
     }
 }

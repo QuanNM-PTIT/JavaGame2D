@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static Utilz.Constants.Directions.*;
 import static Utilz.Constants.ObjectConstants.*;
@@ -23,11 +24,13 @@ public class ObjectManager
     private Playing playing;
     private ArrayList<ArrayList<BufferedImage>> potionImgs, containerImgs;
     private ArrayList<BufferedImage> cannonImgs;
+    private ArrayList<BufferedImage> spaceGateImgs;
     private ArrayList<Potion> potions;
     private ArrayList<GameContainer> gameContainers;
     private ArrayList<Projectile> projectiles = new ArrayList<>();
     private ArrayList<Spike> spikes;
     private ArrayList<Cannon> cannons;
+    protected ArrayList<SpaceGate> spaceGate;
     private BufferedImage spikeImage;
     private BufferedImage ballImg;
     private Level currentLevel;
@@ -70,6 +73,17 @@ public class ObjectManager
         }
     }
 
+    public void checkIsInGate(Rectangle2D.Float hitbox)
+    {
+        for (SpaceGate i : spaceGate)
+            if (i.isActive())
+                if (hitbox.intersects(i.getHitbox()))
+                {
+                    playing.getPlayer().setActive(false);
+                    playing.setLevelCompleted(true);
+                }
+    }
+
     public void applyEffectToPlayer(Potion potion)
     {
         if (potion.getObjType() == RED_POTION)
@@ -87,10 +101,9 @@ public class ObjectManager
                 if (attackbox.intersects(i.getHitbox()))
                 {
                     i.setDoAnimation(true);
-                    int type = 0;
-                    if (i.getObjType() == BARREL)
-                        type = 1;
-                    potions.add(new Potion((int) (i.getHitbox().x + i.getHitbox().width / 2), (int) (i.getHitbox().y - i.getHitbox().height / 2), type));
+                    int type = new Random().nextInt(0, 2);
+                    if (type < 1)
+                        potions.add(new Potion((int) (i.getHitbox().x + i.getHitbox().width / 2), (int) (i.getHitbox().y - i.getHitbox().height / 2), type));
                     return;
                 }
             }
@@ -125,6 +138,13 @@ public class ObjectManager
         for (int i = 0; i < 7; ++i)
             cannonImgs.add(tmp.getSubimage(i * 40, 0, 40, 26));
         ballImg = LoadSave.GetSpriteAtlas(LoadSave.BALL_ATLAS);
+
+        spaceGateImgs = new ArrayList<>();
+        tmp = LoadSave.GetSpriteAtlas(LoadSave.SPACE_GATE);
+        for (int i = 0; i < 9; ++i)
+            for (int j = 0; j < 10; ++j)
+                spaceGateImgs.add(tmp.getSubimage(j * SPACE_GATE_WIDTH_DEFAULT, i * SPACE_GATE_HEIGHT_DEFAULT, 100, 100));
+        spaceGateImgs.add(tmp.getSubimage(9 * SPACE_GATE_WIDTH_DEFAULT, 0, 100, 100));
     }
 
     public void update(int[][] lvlData, Player player)
@@ -135,7 +155,9 @@ public class ObjectManager
         for (GameContainer i : gameContainers)
             if (i.isActive())
                 i.update();
-
+        for (SpaceGate i : spaceGate)
+            if (i.isActive())
+                i.update();
         updateCannons(lvlData, player);
         updateProjectile(lvlData, player);
     }
@@ -214,6 +236,14 @@ public class ObjectManager
         drawTraps(g, xLevelOffset);
         drawProjectiles(g, xLevelOffset);
         drawCannons(g, xLevelOffset);
+        drawSpaceGate(g, xLevelOffset);
+    }
+
+    private void drawSpaceGate(Graphics g, int xLevelOffset)
+    {
+        for (SpaceGate i : spaceGate)
+            if (i.isActive())
+                g.drawImage(spaceGateImgs.get(i.getAniIdx()), (int) (i.getHitbox().x - 20 - xLevelOffset), (int) (i.getHitbox().y - 45), 100, 100, null);
     }
 
     private void drawProjectiles(Graphics g, int xLevelOffset)
@@ -278,7 +308,21 @@ public class ObjectManager
         gameContainers = new ArrayList<>(newLevel.getGameContainers());
         spikes = newLevel.getSpikes();
         cannons = newLevel.getCannons();
+        spaceGate = newLevel.getSpaceGate();
         projectiles.clear();
+    }
+
+    public void addPotion(Rectangle2D.Float hitbox)
+    {
+        int type = new Random().nextInt(0, 2);
+        if (type < 1)
+            potions.add(new Potion((int) (hitbox.x + hitbox.width / 2), (int) (hitbox.y - hitbox.height / 2), type));
+    }
+
+    public void openGate()
+    {
+        for (SpaceGate i : spaceGate)
+            i.active = true;
     }
 
     public void resetAll()
@@ -291,5 +335,10 @@ public class ObjectManager
             i.reset();
         for (Cannon i : cannons)
             i.reset();
+        for (SpaceGate i : spaceGate)
+        {
+            i.reset();
+            i.active = false;
+        }
     }
 }

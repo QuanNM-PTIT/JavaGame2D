@@ -37,16 +37,6 @@ public abstract class Enemy extends Entity
         attackBox.y = hitbox.y;
     }
 
-    protected void updateAttackBoxFlip()
-    {
-        if (walkDir == RIGHT)
-            attackBox.x = hitbox.x + hitbox.width;
-        else
-            attackBox.x = hitbox.x - attackBoxOffsetX;
-
-        attackBox.y = hitbox.y;
-    }
-
     protected void initAttackBox(int w, int h, int attackBoxOffsetX)
     {
         attackBox = new Rectangle2D.Float(x, y, (int) (w * Game.SCALE), (int) (h * Game.SCALE));
