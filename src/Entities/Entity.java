@@ -39,7 +39,7 @@ public abstract class Entity
         g.drawRect((int) attackBox.x - lvlOffsetX, (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
     }
 
-    protected void intitHitbox(int width, int height)
+    protected void initHitbox(int width, int height)
     {
         hitbox = new Rectangle2D.Float(x, y, (int) (width * Game.SCALE), (int) (height * Game.SCALE));
     }

@@ -263,6 +263,9 @@ public class Playing extends State implements Statemethods
                 case KeyEvent.VK_A:
                     player.setAttacking(true);
                     break;
+                case KeyEvent.VK_S:
+                    player.powerAttack();
+                    break;
                 case KeyEvent.VK_SPACE:
                     player.setJump(true);
                     break;
