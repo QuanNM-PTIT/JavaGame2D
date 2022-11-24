@@ -30,11 +30,6 @@ public class GamePanel extends JPanel
         setMaximumSize(size);
     }
 
-    public void updateGame()
-    {
-
-    }
-
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);

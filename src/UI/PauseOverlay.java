@@ -5,9 +5,7 @@ import GameStates.Playing;
 import Main.Game;
 import Utilz.LoadSave;
 
-import static Utilz.Constants.UI.PauseButtons.*;
 import static Utilz.Constants.UI.URMButtons.*;
-import static Utilz.Constants.UI.VolumeButtons.*;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
